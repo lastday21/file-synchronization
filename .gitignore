@@ -1,2 +1,8 @@
 venv/
-config.ini
+config.ini.template
+__pycache__/
+*.py[cod]
+state.json
+logs/
+*.log
+.idea/
