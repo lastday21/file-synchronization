@@ -11,48 +11,48 @@ class Yandex_disc():
         }
         self._logger = logging.getLogger(__name__)
 
-    def _get_upload_url(self, file_name, overwrite=False):
+    def _get_upload_url(self, remote_path, overwrite=False):
         params = {
-            "path": f"{self.cloud_folder}/{file_name}",
+            "path": f"{self.cloud_folder}/{remote_path}",
             "overwrite": str(overwrite).lower()
         }
         resp = requests.get(f"{self.base_url}/upload", headers=self.headers, params=params)
         resp.raise_for_status()
         return resp.json()["href"]
 
-    def load(self,file_name):
-        href = self._get_upload_url(file_name, overwrite=False)
-        with open(file_name, "rb") as f:
+    def load(self,local_path, remote_path):
+        href = self._get_upload_url(remote_path, overwrite=False)
+        with open(local_path, "rb") as f:
             data = f.read()
         response = requests.put(href, data=data, headers=self.headers)
         try:
             response.raise_for_status()
         except requests.RequestException as e:
-            self._logger.error(f"Не удалось загрузить {file_name}:{e}")
+            self._logger.error(f"Не удалось загрузить {local_path}:{e}")
         else:
-            self._logger.info(f"Файл {file_name} успешно загружен в {self.cloud_folder}")
+            self._logger.info(f"Файл {local_path} успешно загружен в {self.cloud_folder}/{remote_path}")
 
-    def reload(self,file_name):
-        href = self._get_upload_url(file_name, overwrite=True)
-        with open(file_name, "rb") as f:
+    def reload(self,local_path, remote_path):
+        href = self._get_upload_url(remote_path, overwrite=True)
+        with open(local_path, "rb") as f:
             data = f.read()
         response = requests.put(href, data=data, headers=self.headers)
         try:
             response.raise_for_status()
         except requests.RequestException as e:
-            self._logger.error(f"Не удалось перезаписать {file_name}:{e}")
+            self._logger.error(f"Не удалось перезаписать {remote_path}:{e}")
         else:
-            self._logger.info(f"Файл {file_name} успешно перезаписан в {self.cloud_folder}")
+            self._logger.info(f"Файл {local_path} успешно перезаписан в {self.cloud_folder}/{remote_path}")
 
-    def delete(self, file_name):
-        url = f"{self.base_url}?path={self.cloud_folder}/{file_name}"
+    def delete(self, local_path):
+        url = f"{self.base_url}?path={self.cloud_folder}/{local_path}"
         response = requests.delete(url, headers=self.headers)
         try:
             response.raise_for_status()
         except requests.RequestException as e:
-            self._logger.error(f"Не удалось удалить {file_name}:{e}")
+            self._logger.error(f"Не удалось удалить {local_path}:{e}")
         else:
-            self._logger.info(f"Файл {file_name} успешно удален из {self.cloud_folder}")
+            self._logger.info(f"Файл {local_path} успешно удален из {self.cloud_folder}/{local_path}")
 
     def get_info(self):
         url = f"{self.base_url}?path={self.cloud_folder}"
