@@ -15,7 +15,7 @@ import os
 from datetime import datetime
 
 
-def get_local_files(path, local_folder):
+def get_local_files(path, root):
     """
     Собирает все файлы в папке и возвращает их относительные пути и время последней модификации.
 
@@ -24,17 +24,25 @@ def get_local_files(path, local_folder):
              модификации в секундах с плавающей точкой (mtime)
     :rtype: Dict[str, float]
     """
-
-    root = Path(local_folder)
-    curr = Path(path)
     files = {}
-    for entry in curr.iterdir():
-        if entry.is_dir():
-            files.update(get_local_files(entry, root))
-        elif entry.is_file():
-            rel = entry.relative_to(root)
-            files[str(rel)] = entry.stat().st_mtime
-    return  files
+
+    try:
+        entries = list(Path(path).iterdir())
+    except OSError as exc:
+        logging.warning(f"Нет доступа к каталогу {path}: {exc}")
+        return files
+
+    for entry in entries:
+        try:
+            if entry.is_dir():
+                files.update(get_local_files(entry, root))
+            elif entry.is_file():
+                rel = entry.relative_to(root)
+                files[str(rel)] = entry.stat().st_mtime
+        except OSError as exc:
+            logging.warning(f"Нет доступа к {entry}: {exc}")
+
+    return files
 
 def sync_cycle(disk_client, local_folder):
     """

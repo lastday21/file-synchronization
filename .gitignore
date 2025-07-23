@@ -6,3 +6,4 @@ state.json
 logs/
 *.log
 .idea/
+cloud_storage/

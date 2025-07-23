@@ -68,8 +68,8 @@ class Yandex_disc():
             response.raise_for_status()
         except requests.RequestException as e:
             self._logger.error(f"Не удалось загрузить {local_path}:{e}")
-        else:
-            self._logger.info(f"Файл {local_path} успешно загружен в {self.cloud_folder}/{remote_path}")
+        # else:
+        #     self._logger.info(f"Файл {local_path} успешно загружен в {self.cloud_folder}/{remote_path}")
 
     def reload(self,local_path, remote_path):
         """
@@ -90,8 +90,8 @@ class Yandex_disc():
             response.raise_for_status()
         except requests.RequestException as e:
             self._logger.error(f"Не удалось перезаписать {remote_path}:{e}")
-        else:
-            self._logger.info(f"Файл {local_path} успешно перезаписан в {self.cloud_folder}/{remote_path}")
+        # else:
+        #     self._logger.info(f"Файл {local_path} успешно перезаписан в {self.cloud_folder}/{remote_path}")
 
     def delete(self, local_path):
         """
@@ -108,8 +108,8 @@ class Yandex_disc():
             response.raise_for_status()
         except requests.RequestException as e:
             self._logger.error(f"Не удалось удалить {local_path}:{e}")
-        else:
-            self._logger.info(f"Файл {local_path} успешно удален из {self.cloud_folder}/{local_path}")
+        # else:
+        #     self._logger.info(f"Файл {local_path} успешно удален из {self.cloud_folder}/{local_path}")
 
     def get_info(self):
         """
@@ -124,13 +124,9 @@ class Yandex_disc():
 
         url = f"{self.base_url}?path={self.cloud_folder}"
         response = requests.get(url, headers=self.headers)
-        try:
-            response.raise_for_status()
-        except requests.RequestException as e:
-            self._logger.error(f"Не удалось получить данные {self.cloud_folder}:{e}")
-            return {}
-        else:
-            data = response.json()
-            count = len(data.get("_embedded", {}).get("items", []))
-            self._logger.info(f"В папке {self.cloud_folder} найдено {count} элементов")
-            return  data
+        response.raise_for_status()
+
+        data = response.json()
+        count = len(data.get("_embedded", {}).get("items", []))
+        self._logger.info(f"В папке {self.cloud_folder} найдено {count} элементов")
+        return data
