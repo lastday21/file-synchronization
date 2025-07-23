@@ -5,6 +5,8 @@
 - reload
 - delete
 - get_info
+
+Перед запускам тестов, вставьте свой токен в config.ini
 """
 
 

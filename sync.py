@@ -80,24 +80,24 @@ def sync_cycle(disk_client, local_folder):
 
     for path in only_local:
         full_local = os.path.join(local_folder, path)
-        try:
-            disk_client.load(full_local, path)
-            logging.info(f"Загружен новый файл: {path}")
-        except Exception as e:
-            logging.error(f"Ошибка при загрузке {path}: {e}")
+        # try:
+        disk_client.load(full_local, path)
+            # logging.info(f"Загружен новый файл: {path}")
+        # except Exception as e:
+        #     logging.error(f"Ошибка при загрузке {path}: {e}")
 
     for path in only_cloud:
-        try:
+        # try:
             disk_client.delete(path)
-            logging.info(f"Файл {path} удален")
-        except Exception as e:
-            logging.error(f"Не удалось удалить {path}: {e}")
+        #     # logging.info(f"Файл {path} удален")
+        # except Exception as e:
+        #     logging.error(f"Не удалось удалить {path}: {e}")
 
     for path in in_both:
         if local_files[path] > cloud_file[path]:
             full_local = os.path.join(local_folder, path)
-            try:
-                disk_client.reload(full_local, path)
-                logging.info(f"Обновление файла завершено: {path}")
-            except Exception as e:
-                logging.error(f"Ошибка при обновлении файла {path}: {e}")
+            # try:
+            disk_client.reload(full_local, path)
+            #     # logging.info(f"Обновление файла завершено: {path}")
+            # except Exception as e:
+            #     logging.error(f"Ошибка при обновлении файла {path}: {e}")
