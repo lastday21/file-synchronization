@@ -33,13 +33,16 @@ class DummyClient:
 
 def test_get_local_files_nested(tmp_path):
     (tmp_path / "dir").mkdir()
-    f1 = tmp_path / "file1.txt"; f1.write_text("a")
-    f2 = tmp_path / "dir" / "file2.txt"; f2.write_text("b")
+    f1 = tmp_path / "file1.txt"
+    f1.write_text("a")
+    f2 = tmp_path / "dir" / "file2.txt"
+    f2.write_text("b")
     res = get_local_files(str(tmp_path), str(tmp_path))
     assert set(res) == {"file1.txt", os.path.join("dir", "file2.txt")}
 
 def test_sync_cycle_only_local(tmp_path):
-    f = tmp_path / "new.txt"; f.write_text("data")
+    f = tmp_path / "new.txt"
+    f.write_text("data")
     client = DummyClient()
     sync_cycle(client, str(tmp_path))
     assert any(str(f) == local for local, _ in client.loaded)
@@ -56,7 +59,8 @@ def test_sync_cycle_only_cloud(tmp_path):
     assert client.reloaded == []
 
 def test_sync_cycle_update_newer(tmp_path):
-    f = tmp_path / "upd.txt"; f.write_text("v2")
+    f = tmp_path / "upd.txt"
+    f.write_text("v2")
     old = datetime.now() - timedelta(days=1)
     iso = old.isoformat() + "+00:00"
     client = DummyClient(items=[
@@ -67,7 +71,8 @@ def test_sync_cycle_update_newer(tmp_path):
     assert any(str(f) == local for local, _ in client.reloaded)
 
 def test_sync_cycle_no_action_if_older(tmp_path):
-    f = tmp_path / "same.txt"; f.write_text("v1")
+    f = tmp_path / "same.txt"
+    f.write_text("v1")
     future = datetime.now() + timedelta(days=1)
     iso = future.isoformat() + "+00:00"
     client = DummyClient(items=[
